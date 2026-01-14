@@ -62,7 +62,7 @@
             --client_secret="{{ forgejo_oidc_client_secret }}" \
             --resource_url="{{ forgejo_oidc_resource_url }}" \
             "{{ forgejo_oidc_client_name }}" \
-            "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name }}/callback"
+            "{{ forgejo_oidc_redirect_uris }}"
       register: nextcloud_oidc_create_forgejo_client_result
       
     - name: Create Mobilizon client
@@ -80,5 +80,5 @@
             --client_secret="{{ mobilizon_oidc_client_secret }}" \
             --resource_url="{{ mobilizon_oidc_resource_url }}" \
             "{{ mobilizon_oidc_client_name }}" \
-            "https://{{ mobilizon_hostname }}/auth/oidc/callback"
+            "{{ mobilizon_oidc_redirect_uris }}"
       register: nextcloud_oidc_create_mobilizon_client_result
