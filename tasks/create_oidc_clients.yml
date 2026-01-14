@@ -33,7 +33,7 @@
             --client_secret="{{ forgejo_oidc_client_secret }}" \
             --resource_url="{{ forgejo_oidc_resource_url }}" \
             "{{ forgejo_oidc_client_name }}" \
-            "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_name }}/callback"
+            "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name }}/callback"
       register: nextcloud_oidc_create_forgejo_client_result
     - name: Create Mobilizon client
       when: mobilizon_oidc_enabled | bool
