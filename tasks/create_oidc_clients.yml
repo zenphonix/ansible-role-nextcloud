@@ -21,7 +21,7 @@
   when: nextcloud_app_oidc_enabled | bool
   block:
     - name: Fail if required variables not defined for Forgejo client
-      when: forgejo_oidc_enabled | bool
+      when: forgejo_oidc_client_enabled | bool
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item.name }}`).
@@ -33,7 +33,7 @@
         - { "name": "forgejo_oidc_client_secret", when: true }
         
     - name: Fail if required variables not defined for Mobilizon client
-      when: mobilizon_oidc_enabled | bool
+      when: mobilizon_oidc_client_enabled | bool
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item.name }}`).
@@ -48,7 +48,7 @@
   when: nextcloud_app_oidc_enabled | bool
   block:
     - name: Create Forgejo client
-      when: forgejo_oidc_enabled | bool
+      when: forgejo_oidc_client_enabled | bool
       ansible.builtin.command:
         cmd: |-
           docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:create \
@@ -66,7 +66,7 @@
       register: nextcloud_oidc_create_forgejo_client_result
       
     - name: Create Mobilizon client
-      when: mobilizon_oidc_enabled | bool
+      when: mobilizon_oidc_client_enabled | bool
       ansible.builtin.command:
         cmd: |-
           docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:create \
