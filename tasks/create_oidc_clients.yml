@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: 2026 Timofej Luitle
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Fail if OIDC Provider app not enabled
+  when: not nextcloud_app_oidc_enabled | bool
+  ansible.builtin.fail:
+    msg: >-
+      You need to enable the OIDC Provider app before running this task (`nextcloud_app_oidc_enabled`).
+
+- name: Ensure OIDC Provider app is installed
+  when: nextcloud_app_oidc_enabled | bool
+  ansible.builtin.command:
+    cmd: |-
+      docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ app:enable oidc
+
+- name: Ensure OIDC clients are created
+  when: nextcloud_app_oidc_enabled | bool
+  block:
+    - name: Create Forgejo client
+      when: forgejo_oidc_enabled | bool
+      ansible.builtin.command:
+        cmd: |-
+          docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:create \
+            --algorithm="{{ forgejo_oidc_algorithm }}" \
+            --flow="{{ forgejo_oidc_flow }}" \
+            --type="{{ forgejo_oidc_type }}" \
+            --token_type="{{ forgejo_oidc_token_type }}" \
+            --allowed_scopes="{{ forgejo_oidc_scopes }}" \
+            --email_regex="{{ forgejo_oidc_email_regex }}" \
+            --client_id="{{ forgejo_oidc_client_id }}" \
+            --client_secret="{{ forgejo_oidc_client_secret }}" \
+            --resource_url="{{ forgejo_oidc_resource_url }}" \
+            "{{ forgejo_oidc_client_name }}" \
+            "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_name }}/callback"
+      register: nextcloud_oidc_create_forgejo_client_result
+    - name: Create Mobilizon client
+      when: mobilizon_oidc_enabled | bool
+      ansible.builtin.command:
+        cmd: |-
+          docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:create \
+            --algorithm="{{ mobilizon_oidc_algorithm }}" \
+            --flow="{{ mobilizon_oidc_flow }}" \
+            --type="{{ mobilizon_oidc_type }}" \
+            --token_type="{{ mobilizon_oidc_token_type }}" \
+            --allowed_scopes="{{ mobilizon_oidc_scopes }}" \
+            --email_regex="{{ mobilizon_oidc_email_regex }}" \
+            --client_id="{{ mobilizon_oidc_client_id }}" \
+            --client_secret="{{ mobilizon_oidc_client_secret }}" \
+            --resource_url="{{ mobilizon_oidc_resource_url }}" \
+            "{{ mobilizon_oidc_client_name }}" \
+            "https://{{ mobilizon_hostname }}/auth/oidc/callback"
+      register: nextcloud_oidc_create_mobilizon_client_result
