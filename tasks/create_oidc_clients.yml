@@ -15,6 +15,33 @@
     cmd: |-
       docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ app:enable oidc
 
+- name: Ensure required variables for OIDC clients are defined
+  when: nextcloud_app_oidc_enabled | bool
+  block:
+    - name: Fail if required variables not defined for Forgejo client
+      when: forgejo_oidc_enabled | bool
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "lookup('ansible.builtin.varnames', ('^' + item.name), wantlist=True) | length = 0"
+      with_items:
+        - { "name": "forgejo_oidc_provider_name", when: true }
+        - { "name": "forgejo_oidc_redirect_uris", when: true }
+        - { "name": "forgejo_oidc_client_id", when: true }
+        - { "name": "forgejo_oidc_client_secret", when: true }
+        
+    - name: Fail if required variables not defined for Mobilizon client
+      when: mobilizon_oidc_enabled | bool
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "lookup('ansible.builtin.varnames', ('^' + item.name), wantlist=True) | length = 0"
+      with_items:
+        - { "name": "mobilizon_oidc_provider_name", when: true }
+        - { "name": "mobilizon_oidc_redirect_uris", when: true }
+        - { "name": "mobilizon_oidc_client_id", when: true }
+        - { "name": "mobilizon_oidc_client_secret", when: true }
+      
 - name: Ensure OIDC clients are created
   when: nextcloud_app_oidc_enabled | bool
   block:
@@ -35,6 +62,7 @@
             "{{ forgejo_oidc_client_name }}" \
             "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name }}/callback"
       register: nextcloud_oidc_create_forgejo_client_result
+      
     - name: Create Mobilizon client
       when: mobilizon_oidc_enabled | bool
       ansible.builtin.command:
