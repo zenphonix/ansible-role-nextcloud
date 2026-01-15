@@ -25,7 +25,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item.name }}`).
-      when: "lookup('ansible.builtin.varnames', ('^' + item.name), wantlist=True) | length = 0"
+      when: "lookup('ansible.builtin.varnames', ('^' + item.name), wantlist=True) | length == 0"
       with_items:
         - { "name": "forgejo_oidc_provider_name", when: true }
         - { "name": "forgejo_oidc_redirect_uris", when: true }
@@ -37,7 +37,7 @@
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item.name }}`).
-      when: "lookup('ansible.builtin.varnames', ('^' + item.name), wantlist=True) | length = 0"
+      when: "lookup('ansible.builtin.varnames', ('^' + item.name), wantlist=True) | length == 0"
       with_items:
         - { "name": "mobilizon_oidc_provider_name", when: true }
         - { "name": "mobilizon_oidc_redirect_uris", when: true }
