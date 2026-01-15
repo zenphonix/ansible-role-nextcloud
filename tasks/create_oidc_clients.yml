@@ -45,12 +45,30 @@
         - { "name": "mobilizon_oidc_redirect_uris", when: true }
         - { "name": "mobilizon_oidc_client_id", when: true }
         - { "name": "mobilizon_oidc_client_secret", when: true }
+
+- name: Check if OIDC clients are already created
+  when: nextcloud_app_oidc_enabled | bool
+  block:
+    - name: List configured OIDC client
+      ansible.builtin.shell: |
+        docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:list
+      register: nextcloud_oidc_list_result
+        
+    - name: Check if Forgejo client present
+      when: forgejo_oidc_client_enabled | bool
+      ansible.builtin.set_fact:
+        forgejo_oidc_client_present: '"name": "{{ forgejo_oidc_client_name }}"' in nextcloud_oidc_list_result
+        
+    - name: Check if Mobilizon client present
+      when: mobilizon_oidc_client_enabled | bool
+      ansible.builtin.set_fact:
+        mobilizon_oidc_client_present: '"name": "{{ mobilizon_oidc_client_name }}"' in nextcloud_oidc_list_result
       
 - name: Ensure OIDC clients are created
   when: nextcloud_app_oidc_enabled | bool
   block:
     - name: Create Forgejo client
-      when: forgejo_oidc_client_enabled | bool
+      when: forgejo_oidc_client_enabled and not forgejo_oidc_client_present | bool
       ansible.builtin.shell: |
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:create \
           --algorithm="{{ forgejo_oidc_algorithm }}" \
@@ -67,7 +85,7 @@
       register: nextcloud_oidc_create_forgejo_client_result
       
     - name: Create Mobilizon client
-      when: mobilizon_oidc_client_enabled | bool
+      when: mobilizon_oidc_client_enabled and not mobilizon_oidc_client_present | bool
       ansible.builtin.shell: |
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:create \
           --algorithm="{{ mobilizon_oidc_algorithm }}" \
