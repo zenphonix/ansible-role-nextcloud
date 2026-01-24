@@ -50,22 +50,24 @@
 - name: Verify OIDC clients installation
   block:
     - name: Verify installed OIDC clients
-      ansible.builtin.set_fact:
-        "{{ item }}_oidc_client_verified": true
       when:
         - lookup('vars', item + '_oidc_client_enabled') | bool
-        - vars['nextcloud_oidc_clients_' + item]                                                           != ""
-        - vars['nextcloud_oidc_clients_' + item]['redirect_uris'] | join('') | regex_findall(' ') | length == 0
-        - vars['nextcloud_oidc_clients_' + item]['name']                                                   == lookup('vars', item + '_oidc_client_name')   | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['redirect_uris'] | join(' ')                              == lookup('vars', item + '_oidc_redirect_uris') | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['jwt_alg']                                                == lookup('vars', item + '_oidc_algorithm')     | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['flow_type']                                              == lookup('vars', item + '_oidc_flow')          | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['type']                                                   == lookup('vars', item + '_oidc_type')          | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['token_type']                                             == lookup('vars', item + '_oidc_token_type')    | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['allowed_scopes']                                         == lookup('vars', item + '_oidc_scopes')        | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['email_regex']                                            == lookup('vars', item + '_oidc_email_regex')   | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['client_secret']                                          == lookup('vars', item + '_oidc_client_secret') | default(false)
-        - vars['nextcloud_oidc_clients_' + item]['resource_url']                                           == lookup('vars', item + '_oidc_resource_url')  | default(false)
+        - client_conf                                                           != ""
+        - client_conf['redirect_uris'] | join('') | regex_findall(' ') | length == 0
+        - client_conf['name']                                                   == lookup('vars', item + '_oidc_client_name')   | default(false)
+        - client_conf['redirect_uris'] | join(' ')                              == lookup('vars', item + '_oidc_redirect_uris') | default(false)
+        - client_conf['jwt_alg']                                                == lookup('vars', item + '_oidc_algorithm')     | default(false)
+        - client_conf['flow_type']                                              == lookup('vars', item + '_oidc_flow')          | default(false)
+        - client_conf['type']                                                   == lookup('vars', item + '_oidc_type')          | default(false)
+        - client_conf['token_type']                                             == lookup('vars', item + '_oidc_token_type')    | default(false)
+        - client_conf['allowed_scopes']                                         == lookup('vars', item + '_oidc_scopes')        | default(false)
+        - client_conf['email_regex']                                            == lookup('vars', item + '_oidc_email_regex')   | default(false)
+        - client_conf['client_secret']                                          == lookup('vars', item + '_oidc_client_secret') | default(false)
+        - client_conf['resource_url']                                           == lookup('vars', item + '_oidc_resource_url')  | default(false)
+      ansible.builtin.set_fact:
+        "{{ item }}_oidc_client_verified": true
+      vars:
+        client_conf: "{{ lookup('vars', 'nextcloud_oidc_clients_' + item) }}
       loop: "{{ nextcloud_oidc_clients_list }}"
 
 - name: Ensure misconfigured OIDC clients are removed
