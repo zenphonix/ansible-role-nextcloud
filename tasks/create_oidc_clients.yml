@@ -67,7 +67,7 @@
       ansible.builtin.set_fact:
         "{{ item }}_oidc_client_verified" : true
       vars:
-        client_conf                       : "{{ lookup('vars', 'nextcloud_oidc_clients_' + item) }}
+        client_conf                       : "{{ lookup('vars', 'nextcloud_oidc_clients_' + item) }}"
         client_conf_redirect_uris_spaces  : "{{ client_conf.redirect_uris | join('') | regex_findall(' ') | length }}"
         client_conf_redirect_uris         : "{{ client_conf.redirect_uris | join(' ') }}"
       loop: "{{ nextcloud_oidc_clients_list }}"
