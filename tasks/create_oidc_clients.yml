@@ -43,8 +43,8 @@
       ansible.builtin.set_fact:
         nextcloud_oidc_clients_{{ item }}: '{{ nextcloud_oidc_clients | json_query(nextcloud_oidc_clients_query) }}'
       vars:
-        nextcloud_oidc_clients: "{{ nextcloud_oidc_clients_result.stdout | from_json }}"
-        nextcloud_oidc_clients_query: "[?client_id==`{{ lookup('vars', item + '_oidc_client_id') }}`] | [0]"
+        nextcloud_oidc_clients       : "{{ nextcloud_oidc_clients_result.stdout | from_json }}"
+        nextcloud_oidc_clients_query : "[?client_id==`{{ lookup('vars', item + '_oidc_client_id') }}`] | [0]"
       loop: "{{ nextcloud_oidc_clients_list }}"
 
 - name: Verify OIDC clients installation
@@ -52,22 +52,24 @@
     - name: Verify installed OIDC clients
       when:
         - lookup('vars', item + '_oidc_client_enabled') | bool
-        - client_conf                                                           != ""
-        - client_conf['redirect_uris'] | join('') | regex_findall(' ') | length == 0
-        - client_conf['name']                                                   == lookup('vars', item + '_oidc_client_name')   | default(false)
-        - client_conf['redirect_uris'] | join(' ')                              == lookup('vars', item + '_oidc_redirect_uris') | default(false)
-        - client_conf['jwt_alg']                                                == lookup('vars', item + '_oidc_algorithm')     | default(false)
-        - client_conf['flow_type']                                              == lookup('vars', item + '_oidc_flow')          | default(false)
-        - client_conf['type']                                                   == lookup('vars', item + '_oidc_type')          | default(false)
-        - client_conf['token_type']                                             == lookup('vars', item + '_oidc_token_type')    | default(false)
-        - client_conf['allowed_scopes']                                         == lookup('vars', item + '_oidc_scopes')        | default(false)
-        - client_conf['email_regex']                                            == lookup('vars', item + '_oidc_email_regex')   | default(false)
-        - client_conf['client_secret']                                          == lookup('vars', item + '_oidc_client_secret') | default(false)
-        - client_conf['resource_url']                                           == lookup('vars', item + '_oidc_resource_url')  | default(false)
+        - client_conf                      != ""
+        - client_conf_redirect_uris_spaces == 0
+        - client_conf_redirect_uris        == lookup('vars', item + '_oidc_redirect_uris') | default(false)
+        - client_conf.name                 == lookup('vars', item + '_oidc_client_name')   | default(false)
+        - client_conf.jwt_alg              == lookup('vars', item + '_oidc_algorithm')     | default(false)
+        - client_conf.flow_type            == lookup('vars', item + '_oidc_flow')          | default(false)
+        - client_conf.type                 == lookup('vars', item + '_oidc_type')          | default(false)
+        - client_conf.token_type           == lookup('vars', item + '_oidc_token_type')    | default(false)
+        - client_conf.allowed_scopes       == lookup('vars', item + '_oidc_scopes')        | default(false)
+        - client_conf.email_regex          == lookup('vars', item + '_oidc_email_regex')   | default(false)
+        - client_conf.client_secret        == lookup('vars', item + '_oidc_client_secret') | default(false)
+        - client_conf.resource_url         == lookup('vars', item + '_oidc_resource_url')  | default(false)
       ansible.builtin.set_fact:
-        "{{ item }}_oidc_client_verified": true
+        "{{ item }}_oidc_client_verified" : true
       vars:
-        client_conf: "{{ lookup('vars', 'nextcloud_oidc_clients_' + item) }}
+        client_conf                       : "{{ lookup('vars', 'nextcloud_oidc_clients_' + item) }}
+        client_conf_redirect_uris_spaces  : "{{ client_conf.redirect_uris | join('') | regex_findall(' ') | length }}"
+        client_conf_redirect_uris         : "{{ client_conf.redirect_uris | join(' ') }}"
       loop: "{{ nextcloud_oidc_clients_list }}"
 
 - name: Ensure misconfigured OIDC clients are removed
@@ -87,10 +89,10 @@
     - name: Register removal of OIDC client
       when: nextcloud_oidc_remove_client_rc == "0"
       ansible.builtin.set_fact:
-        nextcloud_oidc_clients_{{ item }}: ""
+        nextcloud_oidc_clients_{{ item }}  : ""
       vars:
-        nextcloud_oidc_remove_client_rc: "{{ nextcloud_oidc_remove_clients_result | json_query(nextcloud_oidc_remove_client_query) }}"
-        nextcloud_oidc_remove_client_query: 'results[?item==`{{ item }}`].rc | [0]'
+        nextcloud_oidc_remove_client_rc    : "{{ nextcloud_oidc_remove_clients_result | json_query(nextcloud_oidc_remove_client_query) }}"
+        nextcloud_oidc_remove_client_query : 'results[?item==`{{ item }}`].rc | [0]'
       loop: "{{ nextcloud_oidc_clients_list }}"
 
 - name: Ensure OIDC clients are created
