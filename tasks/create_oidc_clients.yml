@@ -39,7 +39,7 @@
       register: nextcloud_oidc_clients_result
       changed_when: false
 
-    - name: Extract information about installed OIDC clients
+    - name: Extract configuration details about already installed OIDC clients
       ansible.builtin.set_fact:
         nextcloud_oidc_clients_{{ item }}: '{{ nextcloud_oidc_clients | json_query(nextcloud_oidc_clients_query) }}'
       vars:
