@@ -12,7 +12,6 @@
       You need to enable the OIDC Provider app before running this task (`nextcloud_app_oidc_enabled`).
 
 - name: Ensure OIDC Provider app is installed
-  when: nextcloud_app_oidc_enabled | bool
   ansible.builtin.command:
     cmd: |-
       docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ app:enable oidc
@@ -20,7 +19,6 @@
   changed_when: "'.' in nextcloud_app_oidc_enabled_result.stdout"
 
 - name: Ensure required variables for OIDC clients are defined
-  when: nextcloud_app_oidc_enabled | bool
   block:
     - name: Fail if required variables not defined for Forgejo client
       when: forgejo_oidc_client_enabled | bool
@@ -47,7 +45,6 @@
         - { "name": "mobilizon_oidc_client_secret", when: true }
 
 - name: Check if OIDC clients are already created
-  when: nextcloud_app_oidc_enabled | bool
   block:
     - name: List configured OIDC client
       ansible.builtin.shell: |
@@ -65,7 +62,6 @@
         mobilizon_oidc_client_present: '"name": "{{ mobilizon_oidc_client_name }}"' in nextcloud_oidc_list_result
       
 - name: Ensure OIDC clients are created
-  when: nextcloud_app_oidc_enabled | bool
   block:
     - name: Create Forgejo client
       when: forgejo_oidc_client_enabled and not forgejo_oidc_client_present | bool
