@@ -31,7 +31,7 @@
         var_name: item[0] + '_oidc_' + item[1]
       loop: "{{ nextcloud_oidc_clients_list | product(['client_name', 'redirect_uris', 'client_id', 'client_secret']) | list }}"
 
-- name: Check if OIDC clients with given client_id are already present
+- name: Check if OIDC clients with given client_id are already registered
   block:
     - name: List configured OIDC clients
       ansible.builtin.shell: |
