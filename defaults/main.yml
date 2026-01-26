@@ -493,7 +493,8 @@ nextcloud_app_app_api_enabled: false
 # This application allows to use your Nextcloud Login at other services supporting OpenID Connect.
 nextcloud_app_oidc_enable: false
 
-# Specify which mash roles will connect as OIDC clients, e.g. ["forgejo", "mobilizon"]
+# Specify which mash roles will connect as OIDC clients, e.g. [forgejo, mobilizon].
+# Configure each OIDC client via its respective role, respecting variable naming convention. 
 nextcloud_oidc_clients_list: []
 
 # Specify database to use
