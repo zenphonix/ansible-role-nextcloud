@@ -43,7 +43,7 @@
     var_name: item[0] + '_oidc_' + item[1]
   loop: "{{ nextcloud_oidc_clients_list | product(['client_name', 'redirect_uris', 'client_id', 'client_secret']) | list }}"
 
-- name: Check if OIDC clients with given client_id are already registered
+- name: Check if OIDC clients with defined client_id are already registered
   block:
     - name: List configured OIDC clients
       ansible.builtin.shell: |
@@ -113,7 +113,7 @@
         nextcloud_oidc_homonyms_query : "[?name==`{{ lookup('vars', item + '_oidc_client_name') }}` && client_id!=`{{ lookup('vars', item + '_oidc_client_id') }}`].client_id"
       loop: "{{ nextcloud_oidc_clients_list }}"
 
-    - name: Remove OIDC clients with the same name
+    - name: Remove redundant OIDC clients
       when: lookup('vars', 'nextcloud_oidc_homonyms_' + item) | length > 0
       ansible.builtin.shell: |
         {% for homonym_client_id in homonyms_list %}
@@ -129,7 +129,7 @@
       changed_when: nextcloud_oidc_remove_homonyms_result.rc == 0
       loop: "{{ nextcloud_oidc_clients_list }}"
 
-- name: Ensure OIDC clients are created
+- name: Ensure OIDC clients are installed correctly
   when:
     - lookup('vars', item + '_oidc_client_enabled') | bool
     - lookup('vars', 'nextcloud_oidc_clients_' + item) == ""
