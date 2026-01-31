@@ -41,13 +41,13 @@
     - name: Run mimetype migrations on Nextcloud
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/mimetype_migrations.yml"
 
-- name: Perform OAuth2 configuration task for Nextcloud OIDC Provider app
+- name: Perform OIDC configuration task for Nextcloud OIDC Provider app
   when: nextcloud_enabled | bool
   tags:
-    - set-oauth2-config-nextcloud
+    - configure-oidc-provider-nextcloud
   block:
-    - name: Configure OIDC Provider app with enabled OAuth2 clients 
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/create_oidc_clients.yml"
+    - name: Configure OIDC Provider app with defined OIDC clients 
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/oidc.yml"
 
 - name: Perform LDAP configuration tasks for Nextcloud
   when: nextcloud_enabled | bool
