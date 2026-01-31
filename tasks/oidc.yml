@@ -14,7 +14,7 @@
       register: nextcloud_app_oidc_enabled_result
       changed_when: "'.' in nextcloud_app_oidc_enabled_result.stdout"
 
-    - name: Ensure scopes claims are configured correctly
+    - name: Ensure scope claims are configured correctly
       ansible.builtin.command:
         cmd: |-
           docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ config:app:set oidc {{ item }} --value "{{ nextcloud_oidc_claim_value }}"
