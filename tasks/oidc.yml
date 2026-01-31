@@ -34,7 +34,7 @@
     msg: >-
       You need to define a required configuration setting (`{{ var_name }}`).
   vars:
-    var_name: item[0] + '_oidc_' + item[1]
+    var_name: "{{ item[0] + '_oidc_' + item[1] }}"
   loop: "{{ nextcloud_oidc_clients_list | product(['client_name', 'redirect_uris']) | list }}"
 
 - name: Check if OIDC clients with defined client_id are already registered
