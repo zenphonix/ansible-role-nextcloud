@@ -29,13 +29,13 @@
 - name: Fail if required variables not defined for OIDC clients
   when:
     - lookup('vars', item[0] + '_oidc_client_enabled') | bool
-    - lookup('vars', var_name, default='undefined') != 'undefined'
+    - lookup('vars', var_name, default='') == ''
   ansible.builtin.fail:
     msg: >-
       You need to define a required configuration setting (`{{ var_name }}`).
   vars:
     var_name: item[0] + '_oidc_' + item[1]
-  loop: "{{ nextcloud_oidc_clients_list | product(['client_name', 'redirect_uris', 'client_id', 'client_secret']) | list }}"
+  loop: "{{ nextcloud_oidc_clients_list | product(['client_name', 'redirect_uris']) | list }}"
 
 - name: Check if OIDC clients with defined client_id are already registered
   block:
@@ -82,7 +82,7 @@
       when:
         - lookup('vars', item + '_oidc_client_id')         != ''
         - lookup('vars', 'nextcloud_oidc_clients_' + item) != ''
-        - not lookup('vars', item + '_oidc_client_enabled', default='false') or not lookup('vars', item + '_oidc_client_verified', default='false')
+        - not lookup('vars', item + '_oidc_client_enabled', default=false) or not lookup('vars', item + '_oidc_client_verified', default=false)
       ansible.builtin.shell: |
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:remove \
           "{{ lookup('vars', item + '_oidc_client_id') }}"
