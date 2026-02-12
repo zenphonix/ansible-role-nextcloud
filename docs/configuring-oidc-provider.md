@@ -97,9 +97,9 @@ mobilizon_oidc_email_regex: ""
 # The resource URL for this client (RFC 9728). Must be a valid URL with max length 512 characters.
 mobilizon_oidc_resource_url: ""
 ```
-
-It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
-
+>[!NOTE]
+>It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
+>Please add the `client_id` and `client_secret` to your variables as recommended after task completion.
 ## How this task works
 
 This task will request a list of all installed OIDC clients, remove clients if settings don't match and (re-)install clients with the provided configuration.
