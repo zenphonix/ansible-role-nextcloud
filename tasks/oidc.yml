@@ -28,7 +28,6 @@
 
 - name: Fail if required variables not defined for OIDC clients
   when:
-    - true
     - lookup('vars', item[0] ~ '_oidc_client_enabled', default=false) | bool
     - lookup('vars', var_name, default='') == ''
   ansible.builtin.fail:
