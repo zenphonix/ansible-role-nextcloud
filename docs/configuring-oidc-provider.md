@@ -88,7 +88,8 @@ mobilizon_oidc_resource_url: ""
 >[!NOTE]
 >It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
 >Please add the `client_id` and `client_secret` to your variables as recommended after task completion.
-## How this task works
+
+## Considerations
 
 This task will request a list of all installed OIDC clients, remove clients if settings don't match and (re-)install clients with the provided configuration.
 
