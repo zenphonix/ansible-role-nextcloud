@@ -1,7 +1,6 @@
 <!--
 SPDX-FileCopyrightText: 2026 Timofej Luitle
 
-
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
@@ -19,7 +18,6 @@ nextcloud_oidc_clients_list:
   - mobilizon
   
 forgejo_oidc_client_enabled: true
-
 mobilizon_oidc_client_enabled: true
 ```
 
@@ -61,39 +59,29 @@ Furthermore, the client options can be configured with the following variables p
 
 # The name of the client
 mobilizon_oidc_client_name: "{{ mobilizon_identifier }}"
-
 # An array of redirect uris
 mobilizon_oidc_redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
-
 # The client id to be used. If not provided the client id will be generated internally.
 # Requirements: chars A-Za-z0-9 & min length 32 & max length 64
 mobilizon_oidc_client_id: ""
-
 # The client secret to be used. If not provided the client secret will be generated internally.
 # Requirements: chars A-Za-z0-9 & min length 32 & max length 64
 mobilizon_oidc_client_secret: ""
-
 # The allowed scopes for the client. E.g. ´openid profile roles´.
 # If not defined any scope is accepted.
 mobilizon_oidc_scopes: "openid email profile"
-
 # The signing algorithm to use. Can be ´RS256´ or ´HS256´.
 mobilizon_oidc_algorithm: "RS256"
-
 # The flow type to use for authentication. Can be ´code´ or ´code id_token´.
 mobilizon_oidc_flow: "code"
-
 # The type of the client. Can be ´public´ or ´confidential´. 
 mobilizon_oidc_type: "confidential"
-
 # The type of the access token created for the client.
 # If set to ´jwt´ a RFC9068 conforming access token is generated.
 mobilizon_oidc_token_type: "opaque"
-
 # The regular expression to select the used email from all email addresses of a user (primary and secondary).
 # If not set always the primary email address will be used.
 mobilizon_oidc_email_regex: ""
-
 # The resource URL for this client (RFC 9728). Must be a valid URL with max length 512 characters.
 mobilizon_oidc_resource_url: ""
 ```
@@ -118,7 +106,6 @@ nextcloud_oidc_clients_list:
   - mobilizon
   
 forgejo_oidc_client_enabled: true
-
 mobilizon_oidc_client_enabled: false
 ```
 
