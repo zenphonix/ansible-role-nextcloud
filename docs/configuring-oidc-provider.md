@@ -8,6 +8,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 This role can optionally enable and configure the [OpenID Connect Provider App](https://github.com/H2CK/oidc), so that users can login to other services using their Nextcloud accounts via OAuth2.
 
+The `oidc.yml` task provided in this role will request a list of all installed OIDC clients, remove clients if settings don't match and (re-)install clients with the provided configuration.
+
 ## Basic usage
 
 To configure an OIDC client for a service, add an entry to the `nextcloud_oidc_clients` dictionary:
@@ -24,7 +26,7 @@ nextcloud_oidc_clients:
 
 To configure a client it is necessary to set the `enabled: true` as well as the appropriate `redirect_uris` entry.
 
-Optionally set a `client_name`:
+Optionally set `client_name`, `client_id` and `client_secret`:
 
 ```yml
 nextcloud_oidc_clients:
@@ -32,7 +34,14 @@ nextcloud_oidc_clients:
     enabled: true
     redirect_uris: "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name | urlencode }}/callback"
     client_name: "my-awesome-forgejo-instance"
+    client_id: "" # generate with e.g. pwgen -s 64 1
+    client_secret: "" # generate with e.g. pwgen -s 64 1
 ```
+>[!NOTE]
+>Be mindful that the `client_name` of the handled clients are regarded as unique identifiers, removing all namesake clients as a result.
+>[!NOTE]
+>It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
+>Please add the generated `client_id` and `client_secret` to your variables as recommended after task completion.
 
 Run the configuration task with:
 
@@ -87,19 +96,11 @@ nextcloud_oidc_clients:
     # The resource URL for this client (RFC 9728). Must be a valid URL with max length 512 characters.
     resource_url: ""
 ```
->[!NOTE]
->It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
->Please add the generated `client_id` and `client_secret` to your variables as recommended after task completion.
-
-## Considerations
-
-This task will request a list of all installed OIDC clients, remove clients if settings don't match and (re-)install clients with the provided configuration.
-
-Be mindful that the `client_name` of the handled clients are regarded as unique identifiers, removing all namesake clients as a result.
 
 >[!NOTE]
->If an optional client configuration variable is not defined, this task first try to reuse the previously set value before setting a default.
+>If an optional client configuration variable is not defined, this task will reuse the previously configured value before resetting to the default.
 >Therefore if a client setting is adjusted in the UI (at https://< nextcloud_hostname >/settings/admin/oidc_provider), the change is respected only if the associated variable in not set.
+>To reset a variable, specify it explicitly within `nextcloud_oidc_clients`, e.g. `resource_url: ""`.
 
 Removing an OIDC client is possible by removing or setting the `enabled` variable to `false` while retaining the client in `nextcloud_oidc_clients`:
 
