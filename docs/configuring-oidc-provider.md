@@ -10,29 +10,28 @@ This role can optionally enable and configure the [OpenID Connect Provider App](
 
 ## Basic usage
 
-To configure an OIDC client for a service, add the respective identifier to the `nextcloud_oidc_clients_list` variable and enable the respective OIDC client:
+To configure an OIDC client for a service, add an entry to the `nextcloud_oidc_clients` dictionary:
 
 ```yml
-nextcloud_oidc_clients_list:
-  - forgejo
-  - mobilizon
-  
-forgejo_oidc_client_enabled: true
-mobilizon_oidc_client_enabled: true
+nextcloud_oidc_clients:
+  forgejo:
+    enabled: true
+    redirect_uris: "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name | urlencode }}/callback"
+  mobilizon:
+    enabled: true
+    mobilizon_oidc_redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
 ```
 
-If the clients don't have a callback url defined in their `defaults.yml`, it is necessary to set a `redirect_uris` variable:
+To configure a client it is necessary to set the `enabled: true` as well as the appropriate `redirect_uris` entry.
+
+Optionally set a `client_name`:
 
 ```yml
-forgejo_oidc_redirect_uris: "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name | urlencode }}/callback"
-mobilizon_oidc_redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
-```
-
-Optionally set a `client_name`. If absent, it generally defaults to the identifier:
-
-```yml
-forgejo_oidc_client_name: "{{ forgejo_identifier }}"
-mobilizon_oidc_client_name: "{{ mobilizon_identifier }}"
+nextcloud_oidc_clients:
+  forgejo:
+    enabled: true
+    redirect_uris: "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name | urlencode }}/callback"
+    client_name: "my-awesome-forgejo-instance"
 ```
 
 Run the configuration task with:
@@ -52,62 +51,62 @@ nextcloud_oidc_group_claim_type: "displayname"
 nextcloud_oidc_role_claim_type: "gid"
 ```
 
-Furthermore, the client options can be configured with the following variables per service:
+Furthermore, the client options can be configured with the following variables:
 
 ```yml
 ## Client configuration for the Nextcloud OIDC Provider
-
-# The name of the client
-mobilizon_oidc_client_name: "{{ mobilizon_identifier }}"
-# An array of redirect uris
-mobilizon_oidc_redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
-# The client id to be used. If not provided the client id will be generated internally.
-# Requirements: chars A-Za-z0-9 & min length 32 & max length 64
-mobilizon_oidc_client_id: ""
-# The client secret to be used. If not provided the client secret will be generated internally.
-# Requirements: chars A-Za-z0-9 & min length 32 & max length 64
-mobilizon_oidc_client_secret: ""
-# The allowed scopes for the client. E.g. ´openid profile roles´.
-# If not defined any scope is accepted.
-mobilizon_oidc_scopes: "openid email profile"
-# The signing algorithm to use. Can be ´RS256´ or ´HS256´.
-mobilizon_oidc_algorithm: "RS256"
-# The flow type to use for authentication. Can be ´code´ or ´code id_token´.
-mobilizon_oidc_flow: "code"
-# The type of the client. Can be ´public´ or ´confidential´. 
-mobilizon_oidc_type: "confidential"
-# The type of the access token created for the client.
-# If set to ´jwt´ a RFC9068 conforming access token is generated.
-mobilizon_oidc_token_type: "opaque"
-# The regular expression to select the used email from all email addresses of a user (primary and secondary).
-# If not set always the primary email address will be used.
-mobilizon_oidc_email_regex: ""
-# The resource URL for this client (RFC 9728). Must be a valid URL with max length 512 characters.
-mobilizon_oidc_resource_url: ""
+nextcloud_oidc_clients:
+  mobilizon:
+    # If enabled, OIDC client will be installed, otherwise it will be deleted
+    enabled: true
+    # The name of the client
+    client_name: "{{ mobilizon_identifier }}"
+    # An array of redirect uris
+    redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
+    # The client id to be used. If not provided the client id will be generated internally.
+    # Requirements: chars A-Za-z0-9 & min length 32 & max length 64
+    client_id: ""
+    # The client secret to be used. If not provided the client secret will be generated internally.
+    # Requirements: chars A-Za-z0-9 & min length 32 & max length 64
+    client_secret: ""
+    # The allowed scopes for the client. E.g. ´openid profile roles´.
+    # If not defined any scope is accepted.
+    scopes: "openid email profile"
+    # The signing algorithm to use. Can be ´RS256´ or ´HS256´.
+    algorithm: "RS256"
+    # The flow type to use for authentication. Can be ´code´ or ´code id_token´.
+    flow: "code"
+    # The type of the client. Can be ´public´ or ´confidential´. 
+    type: "confidential"
+    # The type of the access token created for the client.
+    # If set to ´jwt´ a RFC9068 conforming access token is generated.
+    token_type: "opaque"
+    # The regular expression to select the used email from all email addresses of a user (primary and secondary).
+    # If not set always the primary email address will be used.
+    email_regex: ""
+    # The resource URL for this client (RFC 9728). Must be a valid URL with max length 512 characters.
+    resource_url: ""
 ```
 >[!NOTE]
 >It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
->Please add the `client_id` and `client_secret` to your variables as recommended after task completion.
+>Please add the generated `client_id` and `client_secret` to your variables as recommended after task completion.
 
 ## Considerations
 
 This task will request a list of all installed OIDC clients, remove clients if settings don't match and (re-)install clients with the provided configuration.
 
-Additionally it will ensure that the `name` of the handled clients are unique and will therefore remove all namesake clients. Be mindful.
+Additionally it will ensure that the `client_name` of the handled clients are unique and will therefore remove all namesake clients. Be mindful.
 
 >[!NOTE]
 >If an optional client configuration variable is not defined, this task first try to reuse the previously set value before setting a default.
->Therefore if a client setting is adjusted in the UI (at https://{{ nextcloud_hostname }}/settings/admin/oidc_provider), the change is respected only if the associated variable in not set.
+>Therefore if a client setting is adjusted in the UI (at https://< nextcloud_hostname >/settings/admin/oidc_provider), the change is respected only if the associated variable in not set.
 
-Removing an OIDC client is also possible by setting the `oidc_client_enabled` variable to `false` while retaining the client in `nextcloud_oidc_clients_list`:
+Removing an OIDC client is possible by removing or setting the `enabled` variable to `false` while retaining the client in `nextcloud_oidc_clients`:
 
 ```yml
-nextcloud_oidc_clients_list:
-  - forgejo
-  - mobilizon
-  
-forgejo_oidc_client_enabled: true
-mobilizon_oidc_client_enabled: false
+nextcloud_oidc_clients:
+  forgejo:
+    enabled: false
 ```
 
 The OIDC app also supports creating [custom claims](https://github.com/H2CK/oidc/wiki/User-Documentation#custom-claims) for clients which this task currently does not address.
