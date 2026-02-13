@@ -95,7 +95,7 @@ nextcloud_oidc_clients:
 
 This task will request a list of all installed OIDC clients, remove clients if settings don't match and (re-)install clients with the provided configuration.
 
-Additionally it will ensure that the `client_name` of the handled clients are unique and will therefore remove all namesake clients. Be mindful.
+Be mindful that the `client_name` of the handled clients are regarded as unique identifiers, removing all namesake clients as a result.
 
 >[!NOTE]
 >If an optional client configuration variable is not defined, this task first try to reuse the previously set value before setting a default.
