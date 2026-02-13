@@ -133,7 +133,7 @@
     - name: Verify installed OIDC clients
       when:
         - client_vars.enabled | bool
-        - client_conf         | length > 0
+        - client_conf | length > 0
         - client_conf.client_id      == client_vars.client_id     or client_vars.client_id     | length < 1
         - client_conf.client_secret  == client_vars.client_secret or client_vars.client_secret | length < 1
         - client_conf.name           == client_vars.name
