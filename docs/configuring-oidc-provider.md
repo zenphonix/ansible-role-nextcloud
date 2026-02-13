@@ -38,7 +38,7 @@ nextcloud_oidc_clients:
     client_secret: "" # generate with e.g. pwgen -s 64 1
 ```
 >[!NOTE]
->Be mindful that the `client_name` of the handled clients are regarded as unique identifiers, removing all namesake clients as a result.
+>Be mindful that the `client_name` of the handled clients are regarded as unique identifiers, removing all namesake clients.
 
 >[!NOTE]
 >It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
