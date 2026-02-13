@@ -42,7 +42,7 @@
 - name: Check if OIDC clients with defined client_id are already registered
   block:
     - name: List configured OIDC clients
-      ansible.builtin.shell: >-
+      ansible.builtin.command: >-
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:list
       register: nextcloud_oidc_clients_result
       changed_when: false
@@ -162,7 +162,7 @@
       when:
         - client_conf | length > 0
         - not client_vars.verified
-      ansible.builtin.shell: |
+      ansible.builtin.command: |
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:remove \
           "{{ client_conf.client_id }}"
       vars:
@@ -182,7 +182,7 @@
 
     - name: Remove redundant OIDC clients
       when: homonyms_redundant | default([]) | length > 0
-      ansible.builtin.shell: |
+      ansible.builtin.command: |
         {% for homonym_client_id in homonyms_redundant %}
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:remove \
           "{{ homonym_client_id }}"
@@ -220,7 +220,7 @@
 - name: Confirm configuration
   block:
     - name: List installed OIDC clients
-      ansible.builtin.shell: >-
+      ansible.builtin.command: >-
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:list
       register: nextcloud_oidc_clients_result
       changed_when: false
