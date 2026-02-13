@@ -19,7 +19,7 @@ nextcloud_oidc_clients:
     redirect_uris: "https://{{ forgejo_hostname }}/user/oauth2/{{ forgejo_oidc_provider_name | urlencode }}/callback"
   mobilizon:
     enabled: true
-    mobilizon_oidc_redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
+    redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
 ```
 
 To configure a client it is necessary to set the `enabled: true` as well as the appropriate `redirect_uris` entry.
