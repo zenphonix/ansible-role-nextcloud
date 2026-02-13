@@ -61,7 +61,7 @@ nextcloud_oidc_clients:
     enabled: true
     # The name of the client
     client_name: "{{ mobilizon_identifier }}"
-    # An array of redirect uris
+    # A space-separated array of redirect uris, e.g. "https://first.uri https://second.uri"
     redirect_uris: "https://{{ mobilizon_hostname }}/auth/keycloak/callback"
     # The client id to be used. If not provided the client id will be generated internally.
     # Requirements: chars A-Za-z0-9 & min length 32 & max length 64
