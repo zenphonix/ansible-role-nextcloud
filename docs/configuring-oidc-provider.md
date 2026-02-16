@@ -37,9 +37,9 @@ nextcloud_oidc_clients:
     client_id: "" # generate with e.g. pwgen -s 64 1
     client_secret: "" # generate with e.g. pwgen -s 64 1
 ```
+
 >[!NOTE]
 >Be mindful that the `client_name` of the handled clients are regarded as unique identifiers, removing all namesake clients that are not configured in `nextcloud_oidc_clients`.
-
 >[!NOTE]
 >It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
 >Please add the generated `client_id` and `client_secret` to your variables as recommended after task completion.
@@ -86,7 +86,7 @@ nextcloud_oidc_clients:
     algorithm: "RS256"
     # The flow type to use for authentication. Can be ´code´ or ´code id_token´.
     flow: "code"
-    # The type of the client. Can be ´public´ or ´confidential´. 
+    # The type of the client. Can be ´public´ or ´confidential´.
     type: "confidential"
     # The type of the access token created for the client.
     # If set to ´jwt´ a RFC9068 conforming access token is generated.
