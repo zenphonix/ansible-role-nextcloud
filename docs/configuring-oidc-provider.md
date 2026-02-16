@@ -42,6 +42,7 @@ nextcloud_oidc_clients:
 >Be mindful that `client_name` is used to discover installed clients when there is no matching `client_id`, for cases when `client_id` is changed or not set.
 >To avoid duplicates, all clients with the same `client_name` that are not configured in `nextcloud_oidc_clients` will be removed.
 >Use unique `client_name` values to avoid deletion of manually installed namesake clients.
+>If not set, `client_name` defaults to the client descriptor in the `nextcloud_oidc_clients` dictionary, in the configuration above it would be `forgejo` and `mobilizon` respectively.
 
 >[!NOTE]
 >It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
