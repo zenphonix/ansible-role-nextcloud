@@ -103,7 +103,7 @@ nextcloud_oidc_clients:
 
 >[!NOTE]
 >If an optional client configuration variable is not defined, this task will reuse the previously configured value before resetting to the default.
->Therefore if a client setting is adjusted in the UI (at https://< nextcloud_hostname >/settings/admin/oidc_provider), the change is respected only if the associated variable in not set.
+>Therefore if a client setting is adjusted in the UI (at https://<nextcloud_hostname>/settings/admin/oidc_provider), the change is respected only if the associated variable in not set.
 >To reset a variable, specify it explicitly within `nextcloud_oidc_clients`, e.g. `resource_url: ""`.
 
 Removing an OIDC client is possible by removing or setting the `enabled` variable to `false` while retaining the client in `nextcloud_oidc_clients`:
