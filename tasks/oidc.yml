@@ -23,8 +23,8 @@
       register: nextcloud_oidc_claim_value_result
       changed_when: nextcloud_oidc_claim_value_result.stdout != "Config value were not updated"
       loop:
-        - group_claim_value
-        - role_claim_value
+        - group_claim_type
+        - role_claim_type
 
 - name: Fail if required variables not defined for OIDC clients
   when:
@@ -182,7 +182,7 @@
 
     - name: Remove redundant OIDC clients
       when: homonyms_redundant | default([]) | length > 0
-      ansible.builtin.command: |
+      ansible.builtin.shell: |
         {% for homonym_client_id in homonyms_redundant %}
         docker exec --user={{ nextcloud_uid }}:{{ nextcloud_gid }} {{ nextcloud_identifier }}-server php /var/www/html/occ oidc:remove \
           "{{ homonym_client_id }}"
