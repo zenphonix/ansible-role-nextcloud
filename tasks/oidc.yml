@@ -55,7 +55,7 @@
         client_conf                      : "{{ { item: item_conf } }}"
         item_conf                        : "{{ nextcloud_oidc_clients_installed | json_query(nextcloud_oidc_clients_query) }}"
         nextcloud_oidc_clients_installed : "{{ nextcloud_oidc_clients_result.stdout | from_json }}"
-        nextcloud_oidc_clients_query     : "[?client_id==`{{ client_vars_client_id }}`] | [0]"
+        nextcloud_oidc_clients_query     : "[?client_id==`{{ client_vars_client_id }}`] | [-1]"
         client_vars_client_id            : "{{ nextcloud_oidc_clients[item].client_id | default('') }}"
       loop: "{{ nextcloud_oidc_clients | list }}"
 
@@ -86,7 +86,7 @@
         homonyms_redundant                : "{{ { item: nextcloud_oidc_homonyms[item][:-1] } }}"
         item_conf                         : "{{ nextcloud_oidc_clients_installed | json_query(nextcloud_oidc_clients_query) }}"
         nextcloud_oidc_clients_installed  : "{{ nextcloud_oidc_clients_result.stdout | from_json }}"
-        nextcloud_oidc_clients_query      : "[?client_id==`{{ nextcloud_oidc_homonyms[item][-1] }}`] | [0]"
+        nextcloud_oidc_clients_query      : "[?client_id==`{{ nextcloud_oidc_homonyms[item][-1] }}`] | [-1]"
       loop: "{{ nextcloud_oidc_clients | list }}"
 
 - name: Identify OIDC clients to be updated
@@ -233,7 +233,7 @@
         client_inst                      : "{{ { item: item_inst } }}"
         item_inst                        : "{{ nextcloud_oidc_clients_installed | json_query(nextcloud_oidc_clients_query) }}"
         nextcloud_oidc_clients_installed : "{{ nextcloud_oidc_clients_result.stdout | from_json }}"
-        nextcloud_oidc_clients_query     : "[?name==`{{ client_vars_name }}`] | [0]"
+        nextcloud_oidc_clients_query     : "[?name==`{{ client_vars_name }}`] | [-1]"
         client_vars_name                 : "{{ nextcloud_oidc_clients[item].client_name | default(item) }}"
       loop: "{{ nextcloud_oidc_clients | list }}"
 
