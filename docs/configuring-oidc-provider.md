@@ -39,11 +39,14 @@ nextcloud_oidc_clients:
 ```
 
 >[!NOTE]
->Be mindful that the `client_name` of the handled clients are regarded as unique identifiers, removing all namesake clients that are not configured in `nextcloud_oidc_clients`.
->
+>Be mindful that `client_name` is used to discover installed clients when there is no matching `client_id`, for cases when `client_id` is changed or not set.
+>To avoid dublicates, all clients with the same `client_name` that are not configured in `nextcloud_oidc_clients` will be removed.
+>Use unique `client_name`s to avoid deletion of manually installed namesake clients. 
+
+
 >[!NOTE]
 >It is possible to leave the `client_id` and the `client_secret` blank, in which case a random ID and secret will be generated and conveyed at the end of the playbook execution for retrieval.
->Please add the generated `client_id` and `client_secret` to your variables as recommended after task completion.
+>It is recommended to add the generated `client_id` and `client_secret` to your variables after task completion.
 
 Run the configuration task with:
 
