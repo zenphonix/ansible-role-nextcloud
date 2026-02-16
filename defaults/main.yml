@@ -502,7 +502,9 @@ nextcloud_oidc_group_claim_type: "gid"
 nextcloud_oidc_role_claim_type: "gid"
 # Specify which mash roles will connect as OIDC clients, e.g. [forgejo, mobilizon].
 # Configure each OIDC client via its respective role, respecting variable naming convention.
-nextcloud_oidc_clients_list: []
+nextcloud_oidc_clientsa_auto: {}
+nextcloud_oidc_clients_custom: {}
+nextcloud_oidc_clients: "{{ nextcloud_oidc_clientsa_auto | combine(nextcloud_oidc_clients_custom, recursive=true) }}"
 
 # Specify database to use
 # Valid values: mysql, postgres, sqlite
